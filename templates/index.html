@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ecommerce Product Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        .filter_span {
+  display: inline-block;
+  clear: both;
+}
+span label{
+    font-size: 14px;
+}
+        body{
+            background-color: gray;
+        }
+        .forground_color{
+            background-color: white;
+            color: black;
+        }
+        .banner {
+            /* Banner styles */
+        }
+        .navigation {
+            /* Navigation panel styles */
+        }
+        .sidebar {
+            padding: 10px 10px;
+        }
+        .price-input{
+            margin: 2px;
+        }
+        .product-list {
+            /* Product listing styles */
+        }
+        .product {
+            /* Product styles */
+        }
+
+        .product-card {
+            margin-bottom: 5px;
+        }
+        .product-card .card-img-top {
+            height: 100px;
+            object-fit: cover;
+        }
+         .product-card .original-price {
+            text-decoration: line-through;
+        }
+        .discount_price{
+            color:red
+        }
+         li{
+             list-style: none;
+         }
+         .price-filter-form{
+            display: flex;
+         }
+         .price-filter-form input{
+            height: 30px;
+            margin: 0px 2px 0px 2px;
+         }
+         .price-filter-form input[type='submit']{
+            border-radius: 6px;
+            border: none;
+            background-color: #cd2020;
+         }
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <!-- Banner image and content -->
+    </div>
+    
+    <div class="navigation">
+        <!-- Navigation panel content -->
+    </div>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="sidebar forground_color">
+                    <!-- Sidebar filters -->
+                    
+                        <h3>Price</h3>
+                        <form action="" class="price-filter-form">
+                    <input type="number" name="min_price" id="min_price" placeholder="Min Price" class="form-control price-input"> <div>To</div>
+                    <input type="number" name="max_price" id="max_price" placeholder="Max Price" class="form-control price-input">
+                    <input type="submit" id="price_search_btn" value="Go">
+                </form>
+                    <h3>Brands</h3>
+                    <ul id="brand_filter">
+                    </ul>
+                    
+                    <h3>Earphone</h3>
+                    <ul id="sub_category_filter">
+                    </ul>
+
+
+                    <h3>Product Type</h3>
+                    <ul id="category_filter">
+                    </ul>
+
+                    <h3>Sellers</h3>
+                    <ul id="seller_filter">
+                        <!-- Seller filter options -->
+                    </ul>
+                    
+                    <h3>Warranty</h3>
+                    <ul id="warranty_filter">
+                    </ul>
+                    
+                </div>
+            </div>
+            
+            <div class="col-lg-9">
+               <div class="row" id="products">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+        <script>
+             var product_endpoint = '/api/product/list/'
+             var brand_endpoint = '/api/brand/list/'
+             var category_endpoint = '/api/category/list/'
+             var sub_category_endpoint = 'api/sub/category/list/'
+             var warranty_endpoint = '/api/warranty/list/'
+             var seller_endpoint = 'api/seller/list/'
+             var brand_list = []
+             var category_list = []
+             var sub_category_list = []
+             var warranty_list = []
+             var saller_list = []
+             var payload = {
+
+             }
+
+             $(document).ready(function() {
+                $.ajax({
+                    method: "GET",
+                    url: brand_endpoint,
+                    success: function(data) {
+                        $('#brand_filter').empty();
+                        $.each(data, function(key, value) {
+                            var li = $('<span><input type="checkbox" name="brand" id="brand' + value.id + '" value="' + value.id + '" />' +" "+
+                                '<label for="brand' + value.id + '"> '+ value.name.toUpperCase()+'</label></span><br>');
+                            $('#brand_filter').append(li);
+                        });
+                    }
+                });
+                
+                $.ajax({
+                    method: "GET",
+                    url: category_endpoint,
+                    success: function(data) {
+                        $('#category_filter').empty();
+                        $.each(data, function(key, value) {
+                            var li = $('<span><input type="checkbox" name="category" id="category' + value.id + '" value="' + value.id + '" />' +" "+
+                                '<label for="category' + value.id + '"> '+ value.name.toUpperCase() +'</label></span><br>');
+                            $('#category_filter').append(li);
+                        });
+                    }
+                });
+
+                $.ajax({
+                    method: "GET",
+                    url: sub_category_endpoint,
+                    success: function(data) {
+                        $('#sub_category_filter').empty();
+                        $.each(data, function(key, value) {
+                            var li = $('<span><input type="checkbox" name="sub_category" id="sub_category' + value.id + '" value="' + value.id + '" />' +" "+
+                                '<label for="sub_category"> '+ value.name.toUpperCase() +'</label></span><br>');
+                            $('#sub_category_filter').append(li);
+                        });
+                    }
+                });
+                
+                $.ajax({
+                    method: "GET",
+                    url: seller_endpoint,
+                    success: function(data) {
+                        $('#seller_filter').empty();
+                        $.each(data, function(key, value) {
+                            var li = $('<span><input type="checkbox" name="seller" id="seller' + value.id + '" value="' + value.id + '" />' + " "+
+                                '<label for="seller' + value.id + '"> '+ value.name.toUpperCase() +'</label></span><br>');
+                            $('#seller_filter').append(li);
+                        });
+                    }
+                });
+
+                $.ajax({
+                    method: "GET",
+                    url: warranty_endpoint,
+                    success: function(data) {
+                        $('#warranty_filter').empty();
+                        $.each(data, function(key, value) {
+                            var li = $('<span><input type="checkbox" name="warranty" id="warranty' + value.id + '" value="' + value.id + '" />' +" "+
+                                '<label for="warranty' + value.id + '"> '+ value.name.toUpperCase() +' </label></span><br>');
+                            $('#warranty_filter').append(li);
+                        });
+                    }
+                });
+
+                $.ajax({
+                    method: "GET",
+                    url: product_endpoint,
+                    success: function(data) {
+                        $('#products').empty();
+                        $.each(data, function(key, value) {
+                            var li = $('<div class="col-lg-4"><div class="product-card card"><img src="'+value.image
+                                +'" alt="Product Image" class="card-img-top">'+
+                                '<div class="card-body text-center"><h5 class="card-title">'+ value.name.toUpperCase()
+                                    +'</h5><div class="card-text discount_price">BDT. '+ Math.round(value.discount_price)
+                                        +'</div><div class="card-text original-price">BDT. '+ Math.round(value.price)
+                                        +'</div><a href="#" class="btn btn-primary">Buy Now</a><a href="#" class="btn btn-success">Add to Cart</a></div></div></div>');
+                            $('#products').append(li);
+                        });
+                    }
+                });
+            
+    });
+
+    $('#price_search_btn').on('click', function(event) {
+
+        event.preventDefault();
+        $min_price = $('#min_price').val();
+        $max_price = $('#max_price').val();
+
+        $.ajax({
+            url: product_endpoint,
+            type: 'get',
+            data: {
+                min_price: $min_price,
+                max_price: $max_price,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+
+            success: function(data) {
+                $('#products').empty();
+                $.each(data, function(key, value) {
+                    var li = $('<div class="col-lg-4"><div class="product-card card"><img src="'+value.image
+                        +'" alt="Product Image" class="card-img-top">'+
+                        '<div class="card-body text-center"><h5 class="card-title">'+ value.name
+                            +'</h5><div class="card-text discount_price">BDT. '+ Math.round(value.discount_price)
+                                +'</div><div class="card-text original-price">BDT. '+ Math.round(value.price)
+                                +'</div><a href="#" class="btn btn-primary">Buy Now</a><a href="#" class="btn btn-success">Add to Cart</a></div></div></div>');
+                    $('#products').append(li);
+                });
+            }
+
+        });
+
+    });
+
+    function clear_table() {
+        $('#products').empty();
+    }
+    
+    
+    $('#brand_filter').on('click', function(event) {
+        if(check_checkbox(event.target.id) == true){
+            push_into_array(event.target.value, brand_list)
+            payload[event.target.name] = brand_list
+            load_filtered_product()
+        }
+       
+        else{
+            remove_from_array(parseInt(event.target.value), brand_list)
+            load_filtered_product()
+        }
+    })
+
+    $('#category_filter').on('click', function(event) {
+        if(check_checkbox(event.target.id) == true){
+            push_into_array(event.target.value, category_list)
+            payload[event.target.name] = category_list
+            load_filtered_product()
+        }
+       
+        else{
+            remove_from_array(parseInt(event.target.value), category_list)
+            load_filtered_product()
+        }
+    })
+
+
+    $('#sub_category_filter').on('click', function(event) {
+        if(check_checkbox(event.target.id) == true){
+            push_into_array(event.target.value, sub_category_list)
+            payload[event.target.name] = sub_category_list
+            load_filtered_product()
+        }
+       
+        else{
+            remove_from_array(parseInt(event.target.value), sub_category_list)
+            load_filtered_product()
+        }
+    })
+    $('#seller_filter').on('click', function(event) {
+        if(check_checkbox(event.target.id) == true){
+            push_into_array(event.target.value, saller_list)
+            payload[event.target.name] = saller_list
+            load_filtered_product()
+        }
+       
+        else{
+            remove_from_array(parseInt(event.target.value), saller_list)
+            load_filtered_product()
+        }
+    })
+    
+    $('#warranty_filter').on('click', function(event) {
+        if(check_checkbox(event.target.id) == true){
+            push_into_array(event.target.value, warranty_list)
+            payload[event.target.name] = warranty_list
+            load_filtered_product()
+        }
+       
+        else{
+            remove_from_array(parseInt(event.target.value), warranty_list)
+            load_filtered_product()
+        }
+    })
+    
+
+    function check_checkbox(id) {
+    if (typeof id !== 'undefined' && id !== '') {
+        var isChecked = $('#' + id).prop('checked');
+        return isChecked;
+    }
+    return false;
+}
+function push_into_array(item, arr){
+    if (typeof item !== 'undefined' || item != '') {
+        arr.push(parseInt(item));
+    }
+}
+function remove_from_array(item, arr) {
+   var index = arr.indexOf(item)
+   if (index >= 0){
+    arr.pop(index)
+   }
+   
+}
+
+function load_filtered_product(){
+    // event.preventDefault();
+    $.ajax({
+        url: product_endpoint,
+            type: 'get',
+            data: payload,
+            success: function(data) {
+                $('#products').empty();
+                $.each(data, function(key, value) {
+                    var li = $('<div class="col-lg-4"><div class="product-card card"><img src="'+value.image
+                        +'" alt="Product Image" class="card-img-top">'+
+                        '<div class="card-body text-center"><h5 class="card-title">'+ value.name
+                            +'</h5><div class="card-text discount_price">BDT. '+ Math.round(value.discount_price)
+                                +'</div><div class="card-text original-price">BDT. '+ Math.round(value.price)
+                                +'</div><a href="#" class="btn btn-primary">Buy Now</a><a href="#" class="btn btn-success">Add to Cart</a></div></div></div>');
+                    $('#products').append(li);
+                });
+            }
+        });
+}
+</script>
+         
+</body>
+</html>
