@@ -1,13 +1,20 @@
 {
-  "builds": [{
-      "src": "Qteck_task/wsgi.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.7" }
-  }],
+  "version": 1,
+  "builds": [
+    {
+      "src": "manage.py",
+      "use": "@vercel/python"
+    }
+  ],
   "routes": [
-      {
-          "src": "/(.*)",
-          "dest": "Qteck_task/wsgi.py"
-      }
-  ]
+    {
+      "src": "/(.*)",
+      "dest": "/manage.py"
+    }
+  ],
+  "env": {
+    "VERCEL": "1",
+    "DJANGO_SETTINGS_MODULE": "Qteck_task.settings",
+    "STATIC_ROOT": "staticfiles"
+  }
 }
